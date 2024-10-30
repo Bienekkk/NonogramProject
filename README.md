@@ -1,14 +1,14 @@
 # NonogramProject
 Aplikacja webowa nonogram z poziomami trudności oraz wgrywaniem własnego zdjęcia
 
-# Strona główna
+## Strona główna
 Przyciski do gry i gry z własnym zdjęciem (może tutorial)
 
-# Strona gry
+## Strona gry
 Wybór poziomu trudności, po skończeniu pokazanie obrazka
 
-# Strona z wgrywaniem własnego zdjęcia
+## Strona z wgrywaniem własnego zdjęcia
 Wgraj zdjęcie, wybierz rozmiar planszy i kliknij start
 
-# Języki
+### Języki
 Python, HTML, CSS
