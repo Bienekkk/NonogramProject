@@ -1,7 +1,6 @@
 const content = document.getElementById('content');
 
 function showmodes() {
-    console.log("gwaign")
     content.innerHTML = `
         <div class="modes p-3">
          <h2 class="mb-3">Choose your mode: </h2>
@@ -9,23 +8,25 @@ function showmodes() {
             <div class="mode p-2">
                 <h3>Easy mode</h3>
                 <p>Board size: 5x5</p>
-                <button class="btn btn-success w-100">Play</button>
+                <a href={{ url_for('play', mode='easy') }} class="btn btn-success w-100">Play</a>
             </div>
             <div class="mode p-2">
                 <h3>Medium mode</h3>
                 <p>Board size: 10x10</p>
-                <button class="btn btn-warning w-100">Play</button>
+                <a href={{ url_for('play', mode="medium") }} class="btn btn-warning w-100">Play</a>
               </div>
             <div class="mode p-2">
                 <h3>Hard mode</h3>
                 <p>Board size: 15x15</p>
-                <button class="btn btn-danger w-100">Play</button>
+                <a href={{ url_for('play', mode='hard') }} class="btn btn-danger w-100">Play</a>
             </div>
 
-            <button class='btn btn-outline-danger close-btn p-0 mode' onclick="showmenu()"><i class="bi bi-x"></i></button>
+            <button class='btn btn-outline-light close-btn p-0 mode' onclick="showmenu()"><i class="bi bi-x"></i></button>
       </div>
     `
 }
+
+function
 
 function showmenu() {
     content.innerHTML = `

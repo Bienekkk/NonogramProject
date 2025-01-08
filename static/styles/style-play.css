@@ -1,0 +1,23 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    height: 100vh;
+    background-color: blue;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 200% 200%;
+	animation: gradient 15s ease infinite;
+
+}
+.box{
+    display: grid
+    background-color: white;
+
+}
+.field{
+    width: 50px;
+    height: 50px;
+    background-color: black;
+}
