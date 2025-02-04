@@ -8,24 +8,103 @@
     <script src="{{ url_for('static', filename='scripts/script-play.js') }}" defer></script>
     <meta charset="UTF-8">
     <title>Nonogram game</title>
+    <style>
+        .field, p{
+            {% if mode == 5%}
+                width: 50px;
+                height: 50px;
+            {% elif mode == 10 %}
+                 width: 40px;
+                 height: 40px;
+            {% else %}
+                width: 30px;
+                height: 30px;
+            {% endif %}
+        }
+        .field:nth-child({{ mode }}n + 3) {
+            border-left: 2px solid black;
+        }
+        .field:nth-child(n+{{mode*mode-mode+3}}):nth-child(-n+{{mode*mode+2}}){
+            border-bottom: 2px solid black;
+        }
+        .field:nth-child(n+{{mode*5-mode+3}}):nth-child(-n+{{mode*5+2}}){
+            border-bottom: 2px solid black;
+        }
+        .field:nth-child(n+{{mode*10-mode+3}}):nth-child(-n+{{mode*10+2}}){
+            border-bottom: 2px solid black;
+        }
+        .field:nth-child(-n+{{mode + 2}}) {
+            border-top: 2px solid black;
+        }
+
+        .box{
+            display: grid;
+            grid-template-columns: {% for i in range(0, mode+1) %} 1fr {% endfor %};
+        }
+
+        .colDiv{
+            grid-column: 1/{{mode+2}};
+            display: flex;
+
+        }
+        .rowDiv{
+            grid-row: 2/{{mode+2}};
+        }
+        .imgDiv{
+            position: relative;
+            grid-row: 2/{{mode+2}};
+            grid-column: 2/{{mode+2}};
+            z-index: 2;
+        }
+        .img{
+            {% if mode == 5%}
+                width: {{ 50*mode}}px;
+                height: {{ 50*mode}}px;
+            {% elif mode == 10 %}
+                 width: {{ 40*mode}}px;
+                 height: {{ 40*mode}}px;
+            {% else %}
+                width: {{ 30*mode}}px;
+                height: {{ 30*mode}}px;
+            {% endif %}
+        }
+    </style>
 </head>
+
+
 <body>
-    <p> {{ mode }}</p>
-    <div class="box">
-    {%for i in range(0, 5)%}
-
-            {%if mode == "easy" %}
-                {%for j in range(0, 5)%}
-                    <div class="field"></div>
-                {%endfor%}
-            {%else%}
-                {%for j in range(0, 10)%}
-                    <div class="field">{{j*(i+1)+i+1}}</div>
-                {%endfor%}
-            {%endif%}
-
-
+    <h2> {{ mode }}</h2>
+    <div class="heartsDiv">
+    {%for i in range(1, 4)%}
+        <img class="heart" id="heart{{ i }}" src="{{ url_for('static', filename='src/img/pixel-heart.png') }}" alt="heart">
     {%endfor%}
     </div>
+    <p class="data">{{ data }}</p>
+    <div class="box" draggable="false">
+        <div class="colDiv" draggable="false"><p></p></div>
+        <div class="rowDiv" draggable="false"></div>
+        {%for i in range(0, mode)%}
+            {%for j in range(0, mode)%}
+                <div style="grid-row: {{i+2}}/{{i+3}}; grid-column: {{j+2}}/{{j+3}}" draggable="false" class="field" id="{{ i+j+ i*(mode-1) }}"></div>
+            {%endfor%}
+        {%endfor%}
+
+        <div class="imgDiv">
+
+        </div>
+    </div>
+
+    <label class="toggle-switch square">
+        <input type="checkbox" id="checkbox" checked>
+        <span class="slider"></span>
+    </label>
+
+    <div class="endDiv">
+        <h3 class="endText"></h3>
+        <button class="btn btn-outline-warning" onclick="reset()">Start again</button>
+        <a class="btn btn-outline-danger" href="{{ url_for('index') }}">Back to the menu</a>
+    </div>
+
+
 </body>
 </html>
