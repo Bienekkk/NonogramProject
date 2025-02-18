@@ -13,6 +13,7 @@ let json = JSON.parse(jsonstr);
 console.log(json);
 
 let arr = json["arr"];
+let mode = Math.sqrt(arr.length)
 let targetAmount = 0;
 let checkedAmount = 0;
 for (let i = 0; i < arr.length; i++){
@@ -25,7 +26,7 @@ for (let i = 0; i < cols.length; i++) {
     const col = document.createElement("p");
     col.classList.add('col');
     col.setAttribute('draggable', false);
-    cols[i].forEach((element) => col.innerHTML += (element + "<br>"));
+    cols[i].forEach((element, index) => col.innerHTML += `<div id="col${i}-${index}">${element}</div>` + '<br>'); //naprawić br
     colDiv.appendChild(col);
 }
 
@@ -93,6 +94,12 @@ async function checkAction(field){
     else{
         updateHearts();
     }
+
+    const col = field.id % mode;
+    const row = Math.floor(field.id / mode);
+    console.log(col, row);
+    checkCol(col)
+    //-------------------------------------------------------------------------------------------------
 }
 
 async function updateHearts(){
@@ -139,5 +146,29 @@ async function endGame(text){
         wait = true;
         endDiv.style.display = 'block';
         endText.innerText = text;
+    }
+}
+
+async function checkCol(col){
+    let counter = 0;
+    let sequenceNr = 0;
+    for(let i = col; i < mode*mode + col; i += mode){
+        //console.log(i)
+        let field = document.getElementById(i);
+        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
+            counter ++;
+            console.log(counter)
+            //console.log(cols[col][sequenceNr])
+            if(cols[col][sequenceNr] == counter){
+                document.getElementById(`col${col}-${sequenceNr}`).style.color = 'lightgray';
+                sequenceNr++;
+            }
+        }
+        else if(field.hasChildNodes()){
+            counter = 0;
+        }
+        else{
+            break;
+        }
     }
 }
