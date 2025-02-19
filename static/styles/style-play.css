@@ -47,6 +47,8 @@ p{
 }
 .col{
     min-height: 50px;
+    display: flex;
+    flex-direction: column;
 }
 .row{
     min-width: 40px;

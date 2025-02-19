@@ -26,7 +26,7 @@ for (let i = 0; i < cols.length; i++) {
     const col = document.createElement("p");
     col.classList.add('col');
     col.setAttribute('draggable', false);
-    cols[i].forEach((element, index) => col.innerHTML += `<div id="col${i}-${index}">${element}</div>` + '<br>'); //naprawić br
+    cols[i].forEach((element, index) => col.innerHTML += `<span id="col${i}-${index}">${element}</span>` + '<br>'); //naprawić br
     colDiv.appendChild(col);
 }
 
