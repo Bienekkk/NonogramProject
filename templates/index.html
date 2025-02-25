@@ -5,7 +5,6 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-index.css') }}">
-<!--    <script src="{{ url_for('static', filename='scripts/script-index.js') }}" defer></script>-->
     <title>Nonogram</title>
 </head>
 <body>
@@ -14,7 +13,7 @@
         <div class="d-flex flex-column gap-3 content" id="content">
             <a href = {{ url_for('play', mode='tutorial') }} class="btn btn-light w-100">Tutorial</a>
             <button class="btn btn-outline-light w-100" onclick="showmodes()">Play</button>
-            <button class="btn btn-outline-light w-100">Play with your own photo</button>
+            <button class="btn btn-outline-light w-100" onclick="showform()">Play with your own photo</button>
 
         </div>
     </div>
@@ -48,12 +47,50 @@
     `
 }
 
+function showform() {
+    content.innerHTML = `
+    <div class="modes p-3">
+        <h2 class="mb-3">Upload your picture: </h2>
+
+        <input type="file" name="imagefile" id="imagefile"/>
+        <button class="btn btn-outline-light" onclick="uploadImage()">Upload</button>
+
+        <button class='btn btn-outline-light close-btn p-0 mode' onclick="showmenu()"><i class="bi bi-x"></i></button>
+    </div>
+    `
+}
+
 function showmenu() {
     content.innerHTML = `
         <button class="btn btn-light w-100">Tutorial</button>
         <button class="btn btn-outline-light w-100" onclick="showmodes()">Levels</button>
-        <button class="btn btn-outline-light w-100">Play with your own photo</button>
+        <button class="btn btn-outline-light w-100" onclick="showform()">Play with your own photo</button>
     `
+}
+
+function uploadImage() {
+    const fileInput = document.getElementById("imagefile");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file first.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("imagefile", file);
+
+    fetch("/your_image", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
 }
 </script>
 </body>

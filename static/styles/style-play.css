@@ -49,9 +49,23 @@ p{
     min-height: 50px;
     display: flex;
     flex-direction: column;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-bottom: 5px;
 }
 .row{
-    min-width: 40px;
+    min-width: 30px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0;
+    justify-content: flex-end;
+    --bs-gutter-x: 0rem;
+}
+.row span{
+    padding: 0;
+    width: 20px;
+    text-align: center;
 }
 .heart{
     width: 60px;
