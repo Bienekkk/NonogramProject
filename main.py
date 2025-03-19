@@ -36,6 +36,11 @@ def play():
     ran = random.randint(1, len(data))
     return render_template('play.html', mode=mode, data=data[str(ran)])
 
+@app.route('/your_photo')
+def your_photo():
+    return render_template('your_photo.html')
+
+
 @app.route('/your_image',  methods=['POST'])
 def your_image():
     clearUploads()
@@ -55,13 +60,20 @@ def your_image():
 
         colors = tile(imagefile.filename, 'uploads', 'uploads')
         print("render")
-        #return render_template('your_photo.html')
 
     except Exception as err:
         print("ErRoR", err)
         return jsonify({"error": str(err)}), 500
 
-    return render_template('your_photo.html', colors=colors)
+    print(colors)
+    #print(render_template('your_photo.html', colors=colors))
+    #return render_template('your_photo.html', colors=colors)
+    #return colors
+    print(url_for("static", filename=f"templates/your_photo.html"))
+    return {
+        "colors": colors,
+        "url": url_for("static", filename=f"templates/your_photo.html"),
+    }
 
 @app.route('/temp')
 def temp():

@@ -84,9 +84,11 @@ function uploadImage() {
         method: "POST",
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
+    .then(response => {
+         //window.location = response.url
+         console.log(response.json().then(j => {
+            console.log(j);
+         }));
     })
     .catch(error => {
         console.error("Error:", error);
