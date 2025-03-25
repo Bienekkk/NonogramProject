@@ -15,7 +15,7 @@
 
 <body>
     <h1>twoje zdjecie</h1>
-    <h2> {{ colors }}</h2>
+    <h2 id="colors"> {{ colors }}</h2>
     <div class="heartsDiv">
     {%for i in range(1, 4)%}
         <img class="heart" id="heart{{ i }}" src="{{ url_for('static', filename='src/img/pixel-heart.png') }}" alt="heart">
@@ -48,7 +48,42 @@
     </div>
 
     <script>
-        console.log({{ colors }})
+        colorsStr = document.getElementById('colors').innerText
+        colorsStr = colorsStr.slice(2, -2)
+        colorsArr = colorsStr.split("), (")
+        console.log(colorsArr)
+
+        colorsArr = colorsArr.map((el) => {
+            return el.split(", ")
+        })
+        console.log(colorsArr)
+
+        sumArr = colorsArr.map((el) => {
+            let c = 0;
+            el.map((e) => {
+                c = parseInt(e) + c
+            })
+            return c
+        })
+
+        console.log(sumArr)
+
+        temp = [...sumArr]
+        temp.sort()
+        console.log(temp[50])
+
+        console.log(sumArr)
+
+        checkedArr = sumArr.map((el) => {
+            if(el > temp[50]){
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        })
+
+        console.log(checkedArr)
     </script>
 </body>
 </html>

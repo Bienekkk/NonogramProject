@@ -4,12 +4,14 @@ import random
 import flask
 
 from flask import Flask
-from flask import render_template, url_for, request, jsonify
+from flask import render_template, url_for, request, jsonify, session
 import os, shutil, math
 import json
 from PIL import Image
 from itertools import product
 from colorthief import ColorThief
+from flask_session import Session
+
 
 
 # import binascii
@@ -21,6 +23,8 @@ from colorthief import ColorThief
 NUM_CLUSTERS = 5
 
 app = Flask(__name__)
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 @app.route('/')
 def index():
@@ -38,42 +42,29 @@ def play():
 
 @app.route('/your_photo')
 def your_photo():
-    return render_template('your_photo.html')
+    colors = session.get("colors", [])  # Retrieve colors from session
+    return render_template('your_photo.html', colors=colors)
 
 
-@app.route('/your_image',  methods=['POST'])
+@app.route('/your_image', methods=['POST'])
 def your_image():
-    clearUploads()
     try:
         if 'imagefile' not in request.files:
             return jsonify({"error": "No file part"}), 400
 
         imagefile = request.files['imagefile']
 
-        print(imagefile)
-
         if imagefile.filename == '':
             return jsonify({"error": "No selected file"}), 400
 
-        # Save the file (optional)
         imagefile.save(f"uploads/{imagefile.filename}")
-
-        colors = tile(imagefile.filename, 'uploads', 'uploads')
-        print("render")
+        colors = tile(imagefile.filename, 'uploads', 'uploads')  # Your function
+        session["colors"] = colors
 
     except Exception as err:
-        print("ErRoR", err)
         return jsonify({"error": str(err)}), 500
 
-    print(colors)
-    #print(render_template('your_photo.html', colors=colors))
-    #return render_template('your_photo.html', colors=colors)
-    #return colors
-    print(url_for("static", filename=f"templates/your_photo.html"))
-    return {
-        "colors": colors,
-        "url": url_for("static", filename=f"templates/your_photo.html"),
-    }
+    return jsonify({"redirect_url": url_for("your_photo", _external=True)})
 
 @app.route('/temp')
 def temp():

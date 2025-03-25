@@ -84,11 +84,15 @@ function uploadImage() {
         method: "POST",
         body: formData
     })
-    .then(response => {
-         //window.location = response.url
-         console.log(response.json().then(j => {
-            console.log(j);
-         }));
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error("Error:", data.error);
+            alert("Error: " + data.error);
+            return;
+        }
+        // Redirect user to your_photo page
+        window.location.href = data.redirect_url;
     })
     .catch(error => {
         console.error("Error:", error);
