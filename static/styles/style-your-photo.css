@@ -1,0 +1,44 @@
+#colors{
+    display: none;
+}
+.field, p{
+            width: 40px;
+            height: 40px;
+        }
+        .field:nth-child(10n + 3) {
+            border-left: 2px solid black;
+        }
+        .field:nth-child(n+93):nth-child(-n+102){
+            border-bottom: 2px solid black;
+        }
+        .field:nth-child(n+43):nth-child(-n+52){
+            border-bottom: 2px solid black;
+        }
+        .field:nth-child(-n+12) {
+            border-top: 2px solid black;
+        }
+
+        .box{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        }
+
+        .colDiv{
+            grid-column: 1/12;
+            display: flex;
+
+        }
+        .rowDiv{
+            grid-row: 2/12;
+        }
+
+        .imgDiv{
+            position: relative;
+            grid-row: 2/12;
+            grid-column: 2/12;
+            z-index: 2;
+        }
+        .img{
+             width: 400px;
+             height: 400px;
+        }
