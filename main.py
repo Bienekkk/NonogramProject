@@ -7,7 +7,7 @@ from flask import Flask
 from flask import render_template, url_for, request, jsonify, session
 import os, shutil, math
 import json
-from PIL import Image
+from PIL import Image, ImageOps
 from itertools import product
 from colorthief import ColorThief
 from flask_session import Session
@@ -42,26 +42,32 @@ def play():
 
 @app.route('/your_photo')
 def your_photo():
-    colors = session.get("colors", [])  # Retrieve colors from session
-    return render_template('your_photo.html', colors=colors)
+    colors = session.get("colors", [])
+    img = session.get("img")
+    return render_template('your_photo.html', colors=colors, img=img)
 
 
 @app.route('/your_image', methods=['POST'])
 def your_image():
     try:
+        clearUploads()
+
         if 'imagefile' not in request.files:
             return jsonify({"error": "No file part"}), 400
 
         imagefile = request.files['imagefile']
-
         if imagefile.filename == '':
             return jsonify({"error": "No selected file"}), 400
 
-        imagefile.save(f"uploads/{imagefile.filename}")
-        colors = tile(imagefile.filename, 'uploads', 'uploads')  # Your function
+        save_path = f"static/uploads/{imagefile.filename}"
+        imagefile.save(save_path)
+
+        colors = tile(imagefile.filename, 'static/uploads', 'static/uploads')
         session["colors"] = colors
+        session["img"] = "uploads/" + imagefile.filename
 
     except Exception as err:
+        print("eRRoR")
         return jsonify({"error": str(err)}), 500
 
     return jsonify({"redirect_url": url_for("your_photo", _external=True)})
@@ -70,50 +76,46 @@ def your_image():
 def temp():
     return render_template('temporary.html')
 
+def resize_to_square(img, size=300):
+    img = img.convert("RGB")
+    return img.resize((size, size), Image.Resampling.LANCZOS)
+def is_blank_tile(image):
+    stat = ImageStat.Stat(image)
+    return all(stddev < 1 for stddev in stat.stddev)
 
 def tile(filename, dir_in, dir_out):
     colors = []
     name, ext = os.path.splitext(filename)
-    img = Image.open(os.path.join(dir_in, filename))
-    w, h = img.size
-    d = math.floor(w / 10)
+    img_path = os.path.join(dir_in, filename)
+    img = resize_to_square(Image.open(img_path), size=300)
 
+    w, h = img.size
+    d = max(1, math.floor(w / 10))  # tile size
+
+    # Save tiles
     grid = product(range(0, h - h % d, d), range(0, w - w % d, d))
     for i, j in grid:
         box = (j, i, j + d, i + d)
-        out = os.path.join(dir_out, f'{name}_{i}_{j}{ext}')
-        img.crop(box).save(out)
+        cropped = img.crop(box)
+        out_path = os.path.join(dir_out, f'{name}_{i}_{j}{ext}')
+        cropped.save(out_path)
 
+    # Extract colors
     grid = product(range(0, h - h % d, d), range(0, w - w % d, d))
     for i, j in grid:
-        color_thief = ColorThief(f'uploads/{name}_{i}_{j}{ext}')
-        dominant_color = color_thief.get_color(quality=10)
-        print(i, j, dominant_color)
+        path = os.path.join(dir_out, f'{name}_{i}_{j}{ext}')
+        try:
+            color_thief = ColorThief(path)
+            dominant_color = color_thief.get_color(quality=10)
+        except Exception as e:
+            print(f"Error at {path}: {e}")
+            dominant_color = (255, 255, 255)  # fallback
         colors.append(dominant_color)
 
     return colors
 
-        #print('reading image')
-        # im = img
-        # im = im.resize((150, 150))  # optional, to reduce time
-        # ar = np.asarray(im)
-        # shape = ar.shape
-        # ar = ar.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
-        #
-        # print('finding clusters')
-        # codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
-        # print('cluster centres:\n', codes)
-        #
-        # vecs, dist = scipy.cluster.vq.vq(ar, codes)  # assign codes
-        # counts, bins = scipy.histogram(vecs, len(codes))  # count occurrences
-        #
-        # index_max = scipy.argmax(counts)  # find most frequent
-        # peak = codes[index_max]
-        # colour = binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')
-        # print('most frequent is %s (#%s)' % (peak, colour))
-
 def clearUploads():
-    folder = 'uploads'
+    folder = 'static/uploads'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:

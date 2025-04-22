@@ -14,11 +14,9 @@
 
 <body>
     <h1>twoje zdjecie</h1>
+    <p>{{ img }}</p>
     <p id="colors"> {{ colors }}</p>
     <div class="heartsDiv">
-    {%for i in range(1, 4)%}
-        <img class="heart" id="heart{{ i }}" src="{{ url_for('static', filename='src/img/pixel-heart.png') }}" alt="heart">
-    {%endfor%}
     </div>
     <p class="data"></p>
 
@@ -32,9 +30,11 @@
             {%endfor%}
         {%endfor%}
 
-        <div class="imgDiv">
-
-        </div>
+        {% if img %}
+            <div class="imgDiv">
+                <img id="img" class="img" src="{{ url_for('static', filename=img) }}" alt="img" />
+            </div>
+        {% endif %}
     </div>
 
     <label class="toggle-switch square">

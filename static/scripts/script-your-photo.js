@@ -1,12 +1,13 @@
 colorsStr = document.getElementById('colors').innerText
         colorsStr = colorsStr.slice(2, -2)
         colorsArr = colorsStr.split("), (")
-        console.log(colorsArr)
+        colorsArr[0] = colorsArr[0].slice(1)
+        //console.log(colorsArr)
 
         colorsArr = colorsArr.map((el) => {
             return el.split(", ")
         })
-        console.log(colorsArr)
+        //console.log(colorsArr)
 
         sumArr = colorsArr.map((el) => {
             let c = 0;
@@ -16,16 +17,16 @@ colorsStr = document.getElementById('colors').innerText
             return c
         })
 
-        console.log(sumArr)
+        //console.log(sumArr)
 
         temp = [...sumArr]
         temp.sort()
         console.log(temp[50])
 
-        console.log(sumArr)
+        //console.log(sumArr)
 
         checkedArr = sumArr.map((el) => {
-            if(el >= temp[50]){
+            if(temp[99]==el ? el<temp[50] : el <= temp[50]){
                 return 1;
             }
             else{
@@ -33,7 +34,7 @@ colorsStr = document.getElementById('colors').innerText
             }
         })
 
-        console.log(checkedArr)
+        //console.log(checkedArr)
 
 //------------------------------------------------------------------------------------
 
@@ -63,34 +64,64 @@ for (let i = 0; i < 100; i++){
 let cols = []
 for (let i = 0; i<mode; i++){
     cols[i] = []
-     for (let j = 0; j<mode; j++){
-          cols[i][j] = 0
-     }
+}
+for (let i = 0; i<mode; i+=1){
+    let counter = 0;
+    let tmp = []
+    for (let j = 0; j<mode*mode; j+=10){
+        if(checkedArr[j+i] == 1){
+            counter ++;
+        }
+        else{
+            if (counter!=0){
+                tmp.push(counter)
+            }
+            counter = 0
+        }
+    }
+    if (counter!=0){
+         tmp.push(counter)
+    }
+    //console.log(tmp)
+    cols[i].push(tmp)
+}
+
+let rows = []
+for (let i = 0; i<mode; i++){
+    rows[i] = []
 }
 
 for (let i = 0; i<mode; i++){
+    let counter = 0;
+    let tmp = []
     for (let j = 0; j<mode; j++){
-        let counter = 0;
         if(checkedArr[i*mode+j] == 1){
             counter ++;
         }
         else{
-            cols[i].append(counter)
+            if (counter!=0){
+                tmp.push(counter)
+            }
+            counter = 0
         }
     }
+    if (counter!=0){
+       tmp.push(counter)
+    }
+    rows[i].push(tmp)
 }
 
-let rows = []
-//tutaj fory do rowa
-
-console.log(cols)
+//console.log(rows, cols)
 
 //let cols = json["col"];
 for (let i = 0; i < cols.length; i++) {
     const col = document.createElement("p");
     col.classList.add('col', `col${i}`);
     col.setAttribute('draggable', false);
-    cols[i].forEach((element, index) => col.innerHTML += `<span class="col${i} colId${index}">${element}</span>`);
+    if (cols[i][0].length == 0){
+        col.innerHTML += `<span class="col${i} colId0">0</span>`
+    }
+    cols[i][0].forEach((element, index) => col.innerHTML += `<span class="col${i} colId${index}">${element}</span>`);
     colDiv.appendChild(col);
 }
 
@@ -99,11 +130,14 @@ for (let i = 0; i < rows.length; i++) {
     const row = document.createElement("p");
     row.classList.add('row', `row${i}`);
     row.setAttribute('draggable', false);
-    rows[i].forEach((element, index) => row.innerHTML += `<span class="row${i} rowId${index}">${element}</span>` + " ");
+    if (rows[i][0].length == 0){
+        row.innerHTML += `<span class="row${i} rowId0">0</span>`
+    }
+    rows[i][0].forEach((element, index) => row.innerHTML += `<span class="row${i} rowId${index}">${element}</span>` + " ");
     rowDiv.appendChild(row);
 }
 
-let hearts = 3;
+let hearts = 0;
 let wait = false;
 
 //click actions
@@ -171,13 +205,10 @@ async function checkAction(field){
 
 async function updateHearts(){
     wait = true;
-    let heart = document.getElementById(`heart${hearts}`)
-    heart.style.filter = 'grayscale(1)'
-    hearts--;
+    //let heart = document.getElementById(`heart${hearts}`)
+    //heart.style.filter = 'grayscale(1)'
+    hearts++;
     await new Promise(resolve => setTimeout(resolve, 1000));
-    if(hearts<=0){
-        endGame("You lost!!!")
-    }
     wait = false;
 }
 
@@ -198,12 +229,8 @@ async function endGame(text){
         wait = true;
         imgDiv.style.display = "block";
         imgDiv.style.opacity = 1;
-        const img = document.createElement('img');
-        img.classList.add('img');
+        const img = document.getElementById('img');
         img.style.animation = "opacity 1s linear 1 forwards";
-        let imgSrc = './static/src/img/' + json['img'];
-        img.src = imgSrc;
-        imgDiv.appendChild(img);
 
         await new Promise(resolve => setTimeout(resolve, 2000));
         endDiv.style.display = 'block';
@@ -223,7 +250,7 @@ async function checkCol(col){
         let field = document.getElementById(i);
         if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
             counter ++;
-            if(cols[col][sequenceNr] == counter){
+            if(cols[col][0][sequenceNr] == counter){
                 document.querySelector(`.col${col}.colId${sequenceNr}`).style.color = 'lightgray';
                 sequenceNr++;
             }
@@ -236,12 +263,12 @@ async function checkCol(col){
         }
     }
     counter = 0;
-    sequenceNr = cols[col].length - 1;
+    sequenceNr = cols[col][0].length - 1;
     for(let i = mode*mode + col - mode; i > 0; i -= mode){
         let field = document.getElementById(i);
         if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
             counter ++;
-            if(cols[col][sequenceNr] == counter){
+            if(cols[col][0][sequenceNr] == counter){
                 document.querySelector(`.col${col}.colId${sequenceNr}`).style.color = 'lightgray';
                 sequenceNr--;
             }
@@ -261,7 +288,7 @@ async function checkRow(row){
         let field = document.getElementById(i);
         if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
             counter ++;
-            if(rows[row][sequenceNr] == counter){
+            if(rows[row][0][sequenceNr] == counter){
                 document.querySelector(`.row${row}.rowId${sequenceNr}`).style.color = 'lightgray';
                 sequenceNr++;
             }
@@ -274,12 +301,12 @@ async function checkRow(row){
         }
     }
     counter = 0;
-    sequenceNr = rows[row].length - 1;
+    sequenceNr = rows[row][0].length - 1;
     for(let i = row * mode + mode - 1; i > row * mode; i -= 1){
         let field = document.getElementById(i);
         if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
             counter ++;
-            if(rows[row][sequenceNr] == counter){
+            if(rows[row][0][sequenceNr] == counter){
                 document.querySelector(`.row${row}.rowId${sequenceNr}`).style.color = 'lightgray';
                 sequenceNr--;
             }
@@ -295,7 +322,7 @@ async function checkRow(row){
 async function checkAllRow(row){
     let counter = 0;
     let checked = 0;
-    rows[row].map((e) => {
+    rows[row][0].map((e) => {
         checked += e;
     })
     //console.log(checked)
@@ -313,7 +340,7 @@ async function checkAllRow(row){
 async function checkAllCol(col){
     let counter = 0;
     let checked = 0;
-    cols[col].map((e) => {
+    cols[col][0].map((e) => {
         checked += e;
     })
     console.log(checked)
