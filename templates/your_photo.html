@@ -8,12 +8,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-your-photo.css') }}">
     <script src="{{ url_for('static', filename='scripts/script-your-photo.js') }}" defer></script>
     <meta charset="UTF-8">
-    <title>Nonogram game</title>
+    <title>Nonogram</title>
 </head>
 
 
 <body>
-    <h1>twoje zdjecie</h1>
+    <a class='btn btn-outline-light close-btn p-0 mode position-absolute top-0 end-0 w-1 h-1 m-3' href={{url_for('index')}}><i class="bi bi-x"></i></a>
+    <h1>Your photo</h1>
+    <h2 id="fails">Fails: 0</h2>
     <p>{{ img }}</p>
     <p id="colors"> {{ colors }}</p>
     <div class="heartsDiv">

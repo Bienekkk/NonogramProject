@@ -76,6 +76,10 @@ def your_image():
 def temp():
     return render_template('temporary.html')
 
+@app.route('/tutorial')
+def tutorial():
+    return render_template('tutorial.html')
+
 def resize_to_square(img, size=300):
     img = img.convert("RGB")
     return img.resize((size, size), Image.Resampling.LANCZOS)

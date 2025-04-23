@@ -60,5 +60,8 @@ body{
     transition: all 0.8s;
 }
 .bi{
-    font-size: 30px;
+    font-size: 25px;
+    margin: 1px;
+    width: 30px;
+    height: 30px;
 }

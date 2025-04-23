@@ -205,9 +205,9 @@ async function checkAction(field){
 
 async function updateHearts(){
     wait = true;
-    //let heart = document.getElementById(`heart${hearts}`)
-    //heart.style.filter = 'grayscale(1)'
+    let fails = document.getElementById(`fails`)
     hearts++;
+    fails.innerText = `fails: ${hearts}`
     await new Promise(resolve => setTimeout(resolve, 1000));
     wait = false;
 }

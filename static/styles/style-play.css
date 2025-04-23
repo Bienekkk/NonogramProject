@@ -119,28 +119,42 @@ p{
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: lightgray;
     transition: 0.4s;
     border-radius: 10px;
 }
 
 
 .square .slider:before {
+    text-align: center;
     position: absolute;
-    content: "";
+    content: "X";
+    color: lightgray;
+    font-weight: bold;
     height: 26px;
     width: 26px;
     left: 2px;
     bottom: 2px;
-    background-color: white;
+    background-color: black;
     transition: 0.4s;
     border-radius: 50%;
 }
 
 .square input:checked+.slider {
-    background-color: #4caf50;
+    background-color: white;
 }
 
 .square input:checked+.slider:before {
     transform: translateX(30px);
+    color: black;
+}
+a .bi{
+    font-size: 25px;
+    margin: 1px;
+    width: 30px;
+    height: 30px;
+}
+.close-btn{
+    width: 40px;
+    height: 40px;
 }

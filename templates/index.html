@@ -11,7 +11,7 @@
     <div class="d-flex flex-column justify-content-center align-items-center w-100 container">
             <h1 class="h1 mb-5">Nonogram</h1>
         <div class="d-flex flex-column gap-3 content" id="content">
-            <a href = {{ url_for('play', mode='tutorial') }} class="btn btn-light w-100">Tutorial</a>
+            <a href = {{ url_for('tutorial') }} class="btn btn-light w-100">Tutorial</a>
             <button class="btn btn-outline-light w-100" onclick="showmodes()">Play</button>
             <button class="btn btn-outline-light w-100" onclick="showform()">Play with your own photo</button>
 
@@ -52,7 +52,7 @@ function showform() {
     <div class="modes p-3">
         <h2 class="mb-3">Upload your picture: </h2>
 
-        <input type="file" accept=".jpg, .png" name="imagefile" id="imagefile"/>
+        <input type="file" accept=".jpg, .png, .jpeg" name="imagefile" id="imagefile"/>
         <button class="btn btn-outline-light" onclick="uploadImage()">Upload</button>
 
         <button class='btn btn-outline-light close-btn p-0 mode' onclick="showmenu()"><i class="bi bi-x"></i></button>
@@ -62,7 +62,7 @@ function showform() {
 
 function showmenu() {
     content.innerHTML = `
-        <button class="btn btn-light w-100">Tutorial</button>
+        <a href={{ url_for('tutorial')}} class="btn btn-light w-100">Tutorial</a>
         <button class="btn btn-outline-light w-100" onclick="showmodes()">Levels</button>
         <button class="btn btn-outline-light w-100" onclick="showform()">Play with your own photo</button>
     `
