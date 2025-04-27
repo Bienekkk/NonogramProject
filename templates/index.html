@@ -5,6 +5,7 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-index.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='src/favicons/favicon.ico') }}">
     <title>Nonogram</title>
 </head>
 <body>
@@ -16,6 +17,10 @@
             <button class="btn btn-outline-light w-100" onclick="showform()">Play with your own photo</button>
 
         </div>
+    </div>
+
+    <div id="spinnerOverlay">
+        <img src={{ url_for('static', filename='src/img/logo.png') }} alt="Loading...">
     </div>
 
 <script type="text/javascript">
@@ -80,22 +85,28 @@ function uploadImage() {
     const formData = new FormData();
     formData.append("imagefile", file);
 
+    document.getElementById('spinnerOverlay').style.display = "flex";
+
     fetch("/your_image", {
         method: "POST",
         body: formData
     })
     .then(response => response.json())
     .then(data => {
+        document.getElementById('spinnerOverlay').style.display = "none";
+
         if (data.error) {
             console.error("Error:", data.error);
             alert("Error: " + data.error);
             return;
         }
-        // Redirect user to your_photo page
         window.location.href = data.redirect_url;
     })
     .catch(error => {
         console.error("Error:", error);
+        alert("An unexpected error occurred.");
+
+        document.getElementById('spinnerOverlay').style.display = "none";
     });
 }
 </script>

@@ -44,26 +44,58 @@ let wait = false;
 
 //click actions
 let isMouseDown = false;
+let startX = null;
+let startY = null;
+let lockedDirection = null;
+
 fields.forEach((field) => {
     field.addEventListener("dragstart", (event) => {
         event.preventDefault();
     });
+
     field.addEventListener("mousedown", () => {
         isMouseDown = true;
-        checkAction(field)
+        const { x, y } = field.dataset;
+        startX = parseInt(x);
+        startY = parseInt(y);
+        lockedDirection = null;
+        checkAction(field);
+        console.log("Start at:", x, y);
     });
-    field.addEventListener("mousemove", () => {
+
+    field.addEventListener("mouseenter", () => {
         if (isMouseDown) {
-            checkAction(field)
+            const { x, y } = field.dataset;
+            const currX = parseInt(x);
+            const currY = parseInt(y);
+
+            if (lockedDirection === null) {
+                if (currX !== startX) lockedDirection = "hor";
+                else if (currY !== startY) lockedDirection = "ver";
+            }
+
+            if (
+                (lockedDirection === "hor" && currY === startY) ||
+                (lockedDirection === "ver" && currX === startX) ||
+                lockedDirection === null
+            ) {
+                checkAction(field);
+            }
         }
     });
+
     field.addEventListener("mouseup", () => {
         isMouseDown = false;
     });
 });
+
 document.addEventListener("mouseup", () => {
     isMouseDown = false;
+    startX = null;
+    startY = null;
+    lockedDirection = null;
 });
+
 document.addEventListener("selectstart", (event) => {
     event.preventDefault();
 });

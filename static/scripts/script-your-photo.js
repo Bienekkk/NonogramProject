@@ -1,4 +1,8 @@
-colorsStr = document.getElementById('colors').innerText
+function compareNumbers(a, b) {
+  return a - b;
+}
+
+        colorsStr = document.getElementById('colors').innerText
         colorsStr = colorsStr.slice(2, -2)
         colorsArr = colorsStr.split("), (")
         colorsArr[0] = colorsArr[0].slice(1)
@@ -20,12 +24,13 @@ colorsStr = document.getElementById('colors').innerText
         //console.log(sumArr)
 
         temp = [...sumArr]
-        temp.sort()
+        temp.sort(compareNumbers)
         console.log(temp[50])
 
-        //console.log(sumArr)
-
-        checkedArr = sumArr.map((el) => {
+        checkedArr = sumArr.map((el, index) => {
+//            if(temp[99]==el ? el<temp[50] : el <= temp[50]){
+            console.log("99: ", temp[99]==el)
+            console.log("0: ", temp[0]==el)
             if(temp[99]==el ? el<temp[50] : el <= temp[50]){
                 return 1;
             }
@@ -142,26 +147,58 @@ let wait = false;
 
 //click actions
 let isMouseDown = false;
+let startX = null;
+let startY = null;
+let lockedDirection = null;
+
 fields.forEach((field) => {
     field.addEventListener("dragstart", (event) => {
         event.preventDefault();
     });
+
     field.addEventListener("mousedown", () => {
         isMouseDown = true;
-        checkAction(field)
+        const { x, y } = field.dataset;
+        startX = parseInt(x);
+        startY = parseInt(y);
+        lockedDirection = null;
+        checkAction(field);
+        console.log("Start at:", x, y);
     });
-    field.addEventListener("mousemove", () => {
+
+    field.addEventListener("mouseenter", () => {
         if (isMouseDown) {
-            checkAction(field)
+            const { x, y } = field.dataset;
+            const currX = parseInt(x);
+            const currY = parseInt(y);
+
+            if (lockedDirection === null) {
+                if (currX !== startX) lockedDirection = "hor";
+                else if (currY !== startY) lockedDirection = "ver";
+            }
+
+            if (
+                (lockedDirection === "hor" && currY === startY) ||
+                (lockedDirection === "ver" && currX === startX) ||
+                lockedDirection === null
+            ) {
+                checkAction(field);
+            }
         }
     });
+
     field.addEventListener("mouseup", () => {
         isMouseDown = false;
     });
 });
+
 document.addEventListener("mouseup", () => {
     isMouseDown = false;
+    startX = null;
+    startY = null;
+    lockedDirection = null;
 });
+
 document.addEventListener("selectstart", (event) => {
     event.preventDefault();
 });

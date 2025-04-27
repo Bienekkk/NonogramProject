@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-play.css') }}">
     <script src="{{ url_for('static', filename='scripts/script-play.js') }}" defer></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='src/favicons/favicon.ico') }}">
     <meta charset="UTF-8">
-    <title>Nonogram game</title>
+    <title>Nonogram</title>
     <style>
         .field, p{
             {% if mode == 5%}
@@ -87,7 +88,7 @@
         <div class="rowDiv" draggable="false"></div>
         {%for i in range(0, mode)%}
             {%for j in range(0, mode)%}
-                <div style="grid-row: {{i+2}}/{{i+3}}; grid-column: {{j+2}}/{{j+3}}" draggable="false" class="field" id="{{ i+j+ i*(mode-1) }}"></div>
+                <div style="grid-row: {{i+2}}/{{i+3}}; grid-column: {{j+2}}/{{j+3}}" data-x={{j}} data-y={{i}} draggable="false" class="field" id="{{ i+j+ i*(mode-1) }}"></div>
             {%endfor%}
         {%endfor%}
 
