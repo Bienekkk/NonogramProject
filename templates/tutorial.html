@@ -6,54 +6,17 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-play.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-tutorial.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='src/favicons/favicon.ico') }}">
     <script src="{{ url_for('static', filename='scripts/script-tutorial.js') }}" defer></script>
     <title>Nonogram</title>
-    <style>
-        .field, p{
-            width: 50px;
-            height: 50px;
-        }
-        .field:nth-child(5n + 3) {
-            border-left: 2px solid black;
-        }
-        .field:nth-child(n+23):nth-child(-n+27){
-            border-bottom: 2px solid black;
-        }
-        .field:nth-child(-n+7) {
-            border-top: 2px solid black;
-        }
-
-        .box{
-            display: grid;
-            grid-template-columns: {% for i in range(0, 6) %} 1fr {% endfor %};
-        }
-
-        .colDiv{
-            grid-column: 1/7;
-            display: flex;
-
-        }
-        .rowDiv{
-            grid-row: 2/7;
-        }
-
-        .imgDiv{
-            position: relative;
-            grid-row: 2/7;
-            grid-column: 2/7;
-            z-index: 2;
-        }
-        .img{
-            width: 250px;
-            height: 250px;
-        }
-    </style>
 </head>
 
 
 <body>
     <a class='btn btn-outline-light close-btn p-0 mode position-absolute top-0 end-0 w-1 h-1 m-3' href={{url_for('index')}}><i class="bi bi-x"></i></a>
+
+    <div class="cloud" id="cloud">Welcome to Nonogram!</div>
 
     <div class="box" draggable="false">
         <div class="colDiv" draggable="false"><p></p></div>

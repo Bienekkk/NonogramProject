@@ -1,0 +1,48 @@
+.field, p{
+            width: 50px;
+            height: 50px;
+        }
+        .field:nth-child(5n + 3) {
+            border-left: 2px solid black;
+        }
+        .field:nth-child(n+23):nth-child(-n+27){
+            border-bottom: 2px solid black;
+        }
+        .field:nth-child(-n+7) {
+            border-top: 2px solid black;
+        }
+
+        .box{
+            display: grid;
+            grid-template-columns: {% for i in range(0, 6) %} 1fr {% endfor %};
+        }
+
+        .colDiv{
+            grid-column: 1/7;
+            display: flex;
+
+        }
+        .rowDiv{
+            grid-row: 2/7;
+        }
+
+        .imgDiv{
+            position: relative;
+            grid-row: 2/7;
+            grid-column: 2/7;
+            z-index: 2;
+        }
+        .img{
+            width: 250px;
+            height: 250px;
+        }
+
+.cloud{
+    background-color: white;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-weight: bold;
+
+    font-size: 20px;
+}

@@ -6,6 +6,15 @@ let endDiv = document.querySelector('.endDiv');
 let endText = document.querySelector('.endText');
 let imgDiv = document.querySelector('.imgDiv');
 
+let checkedAmount = 0;
+let fieldArr = Array.prototype.slice.call(fields)
+let toNext = 5
+let stage = 1;
+let blue;
+let toClick = fieldArr.filter((el) => el.id >=5 && el.id <=9)
+console.log(toClick)
+checkbox.disabled = true;
+
 let json = {
           "img": "serce.png",
           "col": [[2],[4],[4],[4],[2]],
@@ -22,7 +31,7 @@ console.log(json);
 let arr = json["arr"];
 let mode = Math.sqrt(arr.length)
 let targetAmount = 0;
-let checkedAmount = 0;
+
 for (let i = 0; i < arr.length; i++){
     if(arr[i]==1){
         targetAmount++;
@@ -46,6 +55,10 @@ for (let i = 0; i < rows.length; i++) {
     rowDiv.appendChild(row);
 }
 
+blue = document.querySelector('.row1')
+colors()
+
+
 let hearts = 3;
 let wait = false;
 
@@ -55,46 +68,77 @@ let startX = null;
 let startY = null;
 let lockedDirection = null;
 
-fields.forEach((field) => {
-    field.addEventListener("dragstart", (event) => {
-        event.preventDefault();
-    });
-
-    field.addEventListener("mousedown", () => {
-        isMouseDown = true;
-        const { x, y } = field.dataset;
-        startX = parseInt(x);
-        startY = parseInt(y);
-        lockedDirection = null;
-        checkAction(field);
-        console.log("Start at:", x, y);
-    });
-
-    field.addEventListener("mouseenter", () => {
-        if (isMouseDown) {
-            const { x, y } = field.dataset;
-            const currX = parseInt(x);
-            const currY = parseInt(y);
-
-            if (lockedDirection === null) {
-                if (currX !== startX) lockedDirection = "hor";
-                else if (currY !== startY) lockedDirection = "ver";
-            }
-
-            if (
-                (lockedDirection === "hor" && currY === startY) ||
-                (lockedDirection === "ver" && currX === startX) ||
-                lockedDirection === null
-            ) {
-                checkAction(field);
-            }
+function colors(){
+    blue.style.border = "3px solid aqua";
+    toClick.map((el, index) => {
+        el.style.borderTop = "3px solid red"
+        el.style.borderBottom = "3px solid red"
+        if(index == 0){
+            el.style.borderLeft = "3px solid red"
         }
-    });
+        if(index == 4){
+            el.style.borderRight = "3px solid red"
+        }
+    })
+}
 
-    field.addEventListener("mouseup", () => {
-        isMouseDown = false;
+function offColors(){
+    blue.style.border = "3px solid aqua";
+    toClick.map((el, index) => {
+        el.style.borderTop = "3px solid red"
+        el.style.borderBottom = "3px solid red"
+        if(index == 0){
+            el.style.borderLeft = "3px solid red"
+        }
+        if(index == 4){
+            el.style.borderRight = "3px solid red"
+        }
+    })
+}
+
+function handles(){
+    toClick.forEach((field) => {
+        field.addEventListener("dragstart", (event) => {
+            event.preventDefault();
+        });
+
+        field.addEventListener("mousedown", () => {
+            isMouseDown = true;
+            const { x, y } = field.dataset;
+            startX = parseInt(x);
+            startY = parseInt(y);
+            lockedDirection = null;
+            checkAction(field);
+            console.log("Start at:", x, y);
+        });
+
+        field.addEventListener("mouseenter", () => {
+            if (isMouseDown) {
+                const { x, y } = field.dataset;
+                const currX = parseInt(x);
+                const currY = parseInt(y);
+
+                if (lockedDirection === null) {
+                    if (currX !== startX) lockedDirection = "hor";
+                    else if (currY !== startY) lockedDirection = "ver";
+                }
+
+                if (
+                    (lockedDirection === "hor" && currY === startY) ||
+                    (lockedDirection === "ver" && currX === startX) ||
+                    lockedDirection === null
+                ) {
+                    checkAction(field);
+                }
+            }
+        });
+
+        field.addEventListener("mouseup", () => {
+            isMouseDown = false;
+        });
     });
-});
+}
+handles()
 
 document.addEventListener("mouseup", () => {
     isMouseDown = false;
@@ -137,6 +181,19 @@ async function checkAction(field){
 
 async function updateClicked(){
     checkedAmount++;
+    console.log(checkedAmount)
+    if(checkedAmount==toNext){
+        stage++;
+        console.log("next", stage)
+        if(stage == 2){
+            offColors()
+            console.log("ejjj")
+            toClick = fieldArr.filter((el) => el.id >=10 && el.id <=14)
+            blue = document.querySelector('.row2')
+            handles()
+            colors()
+        }
+    }
     if(checkedAmount==targetAmount){
         await new Promise(resolve => setTimeout(resolve, 500));
         endGame()
@@ -263,7 +320,6 @@ async function checkAllCol(col){
     cols[col].map((e) => {
         checked += e;
     })
-    console.log(checked)
     for(let i = col; i < mode*mode + col; i += mode){
         let field = document.getElementById(i);
         if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
