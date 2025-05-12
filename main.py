@@ -78,10 +78,6 @@ def your_image():
 
     return jsonify({"redirect_url": url_for("your_photo", _external=True)})
 
-@app.route('/temp')
-def temp():
-    return render_template('temporary.html')
-
 @app.route('/tutorial')
 def tutorial():
     return render_template('tutorial.html')

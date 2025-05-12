@@ -1,10 +1,12 @@
+import { checkCol, checkRow, checkAllCol, checkAllRow, checkAction }  from "./functions.js"
+
 function compareNumbers(a, b) {
   return a - b;
 }
 
-        colorsStr = document.getElementById('colors').innerText
+        let colorsStr = document.getElementById('colors').innerText
         colorsStr = colorsStr.slice(2, -2)
-        colorsArr = colorsStr.split("), (")
+        let colorsArr = colorsStr.split("), (")
         colorsArr[0] = colorsArr[0].slice(1)
         //console.log(colorsArr)
 
@@ -13,7 +15,7 @@ function compareNumbers(a, b) {
         })
         //console.log(colorsArr)
 
-        sumArr = colorsArr.map((el) => {
+        let sumArr = colorsArr.map((el) => {
             let c = 0;
             el.map((e) => {
                 c = parseInt(e) + c
@@ -23,14 +25,11 @@ function compareNumbers(a, b) {
 
         //console.log(sumArr)
 
-        temp = [...sumArr]
+        let temp = [...sumArr]
         temp.sort(compareNumbers)
         console.log(temp[50])
 
-        checkedArr = sumArr.map((el, index) => {
-//            if(temp[99]==el ? el<temp[50] : el <= temp[50]){
-            console.log("99: ", temp[99]==el)
-            console.log("0: ", temp[0]==el)
+        let checkedArr = sumArr.map((el, index) => {
             if(temp[99]==el ? el<temp[50] : el <= temp[50]){
                 return 1;
             }
@@ -67,53 +66,52 @@ for (let i = 0; i < 100; i++){
 }
 
 let cols = []
-for (let i = 0; i<mode; i++){
-    cols[i] = []
-}
-for (let i = 0; i<mode; i+=1){
+
+for (let i = 0; i < mode; i++) {
     let counter = 0;
-    let tmp = []
-    for (let j = 0; j<mode*mode; j+=10){
-        if(checkedArr[j+i] == 1){
-            counter ++;
-        }
-        else{
-            if (counter!=0){
-                tmp.push(counter)
+    let tmp = [];
+
+    for (let j = 0; j < mode; j++) {
+        let index = j * mode + i;
+        if (checkedArr[index] == 1) {
+            counter++;
+        } else {
+            if (counter != 0) {
+                tmp.push(counter);
+                counter = 0;
             }
-            counter = 0
         }
     }
-    if (counter!=0){
-         tmp.push(counter)
+
+    if (counter != 0) {
+        tmp.push(counter);
     }
-    //console.log(tmp)
-    cols[i].push(tmp)
+
+    cols[i] = tmp;
 }
 
-let rows = []
-for (let i = 0; i<mode; i++){
-    rows[i] = []
-}
+let rows = [];
 
-for (let i = 0; i<mode; i++){
+for (let i = 0; i < mode; i++) {
     let counter = 0;
-    let tmp = []
-    for (let j = 0; j<mode; j++){
-        if(checkedArr[i*mode+j] == 1){
-            counter ++;
-        }
-        else{
-            if (counter!=0){
-                tmp.push(counter)
+    let tmp = [];
+
+    for (let j = 0; j < mode; j++) {
+        if (checkedArr[i * mode + j] == 1) {
+            counter++;
+        } else {
+            if (counter != 0) {
+                tmp.push(counter);
+                counter = 0;
             }
-            counter = 0
         }
     }
-    if (counter!=0){
-       tmp.push(counter)
+
+    if (counter != 0) {
+        tmp.push(counter);
     }
-    rows[i].push(tmp)
+
+    rows[i] = tmp;
 }
 
 //console.log(rows, cols)
@@ -123,10 +121,10 @@ for (let i = 0; i < cols.length; i++) {
     const col = document.createElement("p");
     col.classList.add('col', `col${i}`);
     col.setAttribute('draggable', false);
-    if (cols[i][0].length == 0){
+    if (cols[i].length == 0){
         col.innerHTML += `<span class="col${i} colId0">0</span>`
     }
-    cols[i][0].forEach((element, index) => col.innerHTML += `<span class="col${i} colId${index}">${element}</span>`);
+    cols[i].forEach((element, index) => col.innerHTML += `<span class="col${i} colId${index}">${element}</span>`);
     colDiv.appendChild(col);
 }
 
@@ -135,10 +133,10 @@ for (let i = 0; i < rows.length; i++) {
     const row = document.createElement("p");
     row.classList.add('row', `row${i}`);
     row.setAttribute('draggable', false);
-    if (rows[i][0].length == 0){
+    if (rows[i].length == 0){
         row.innerHTML += `<span class="row${i} rowId0">0</span>`
     }
-    rows[i][0].forEach((element, index) => row.innerHTML += `<span class="row${i} rowId${index}">${element}</span>` + " ");
+    rows[i].forEach((element, index) => row.innerHTML += `<span class="row${i} rowId${index}">${element}</span>` + " ");
     rowDiv.appendChild(row);
 }
 
@@ -162,7 +160,7 @@ fields.forEach((field) => {
         startX = parseInt(x);
         startY = parseInt(y);
         lockedDirection = null;
-        checkAction(field);
+        checkAction(field, mode, wait, checkedArr, updateClicked, updateHearts, rows, cols);
         console.log("Start at:", x, y);
     });
 
@@ -182,7 +180,7 @@ fields.forEach((field) => {
                 (lockedDirection === "ver" && currX === startX) ||
                 lockedDirection === null
             ) {
-                checkAction(field);
+                checkAction(field, mode, wait, checkedArr, updateClicked, updateHearts, rows, cols);
             }
         }
     });
@@ -202,43 +200,6 @@ document.addEventListener("mouseup", () => {
 document.addEventListener("selectstart", (event) => {
     event.preventDefault();
 });
-
-async function checkAction(field){
-    if(wait || field.style.backgroundColor === 'rgb(30, 30, 30)' || field.hasChildNodes()){
-        return;
-    }
-
-    const col = field.id % mode;
-    const row = Math.floor(field.id / mode);
-
-    if(checkedArr[field.id] === 1){
-        field.style.backgroundColor = "#1E1E1E";
-        field.classList.add("checked");
-        updateClicked();
-
-        if(checkbox.checked===false){
-            updateHearts();
-        }
-        checkAllRow(row)
-        checkAllCol(col)
-    }
-    else if(checkedArr[field.id] === 0){
-        const x = document.createElement('i');
-        x.classList.add('bi');
-        x.classList.add('bi-x-lg');
-        field.appendChild(x);
-
-        if(checkbox.checked===true){
-            updateHearts();
-        }
-    }
-    else{
-        updateHearts();
-    }
-
-    checkCol(col)
-    checkRow(row)
-}
 
 async function updateHearts(){
     wait = true;
@@ -277,117 +238,5 @@ async function endGame(text){
         wait = true;
         endDiv.style.display = 'block';
         endText.innerText = text;
-    }
-}
-
-async function checkCol(col){
-    let counter = 0;
-    let sequenceNr = 0;
-    for(let i = col; i < mode*mode + col; i += mode){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(cols[col][0][sequenceNr] == counter){
-                document.querySelector(`.col${col}.colId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr++;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-    counter = 0;
-    sequenceNr = cols[col][0].length - 1;
-    for(let i = mode*mode + col - mode; i > 0; i -= mode){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(cols[col][0][sequenceNr] == counter){
-                document.querySelector(`.col${col}.colId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr--;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-}
-async function checkRow(row){
-    let counter = 0;
-    let sequenceNr = 0;
-    for(let i = row * mode; i < row * mode + mode; i += 1){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(rows[row][0][sequenceNr] == counter){
-                document.querySelector(`.row${row}.rowId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr++;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-    counter = 0;
-    sequenceNr = rows[row][0].length - 1;
-    for(let i = row * mode + mode - 1; i > row * mode; i -= 1){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(rows[row][0][sequenceNr] == counter){
-                document.querySelector(`.row${row}.rowId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr--;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-}
-async function checkAllRow(row){
-    let counter = 0;
-    let checked = 0;
-    rows[row][0].map((e) => {
-        checked += e;
-    })
-    //console.log(checked)
-    for(let i = row * mode; i < row * mode + mode; i += 1){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-        }
-    }
-    if(counter == checked){
-        document.querySelector(`.row${row}`).style.color = "lightgray";
-    }
-}
-
-async function checkAllCol(col){
-    let counter = 0;
-    let checked = 0;
-    cols[col][0].map((e) => {
-        checked += e;
-    })
-    console.log(checked)
-    for(let i = col; i < mode*mode + col; i += mode){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-        }
-    }
-    if(counter == checked){
-        document.querySelector(`.col${col}`).style.color = "lightgray";
     }
 }

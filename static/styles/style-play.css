@@ -48,11 +48,13 @@ p{
 }
 .col{
     min-height: 50px;
+
     display: flex;
     flex-direction: column;
     gap: 8px;
     justify-content: flex-end;
-    margin-bottom: 5px;
+    padding-bottom: 5px;
+    box-sizing: border-box;
 }
 .row{
     min-width: 30px;

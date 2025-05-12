@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-play.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-tutorial.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='src/favicons/favicon.ico') }}">
-    <script src="{{ url_for('static', filename='scripts/script-tutorial.js') }}" defer></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/script-tutorial.js') }}" defer></script>
     <title>Nonogram</title>
 </head>
 
@@ -16,8 +16,9 @@
 <body>
     <a class='btn btn-outline-light close-btn p-0 mode position-absolute top-0 end-0 w-1 h-1 m-3' href={{url_for('index')}}><i class="bi bi-x"></i></a>
 
-    <div class="cloud" id="cloud">Welcome to Nonogram!</div>
-
+    <div class="cloudBox">
+        <div class="cloud" id="cloud">Welcome to Nonogram!</div>
+    </div>
     <div class="box" draggable="false">
         <div class="colDiv" draggable="false"><p></p></div>
         <div class="rowDiv" draggable="false"></div>
@@ -39,7 +40,7 @@
 
     <div class="endDiv">
         <h3 class="endText"></h3>
-        <button class="btn btn-outline-warning" onclick="reset()">Start again</button>
+        <button class="btn btn-outline-warning" onclick="window.location.reload();">Start again</button>
         <a class="btn btn-outline-danger" href="{{ url_for('index') }}">Back to the menu</a>
     </div>
 </body>

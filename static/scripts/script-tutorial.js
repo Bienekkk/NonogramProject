@@ -1,3 +1,5 @@
+import { checkCol, checkRow, checkAllCol, checkAllRow }  from "./functions.js"
+
 let colDiv = document.querySelector('.colDiv');
 let rowDiv = document.querySelector('.rowDiv');
 let fields = document.querySelectorAll('.field');
@@ -6,14 +8,123 @@ let endDiv = document.querySelector('.endDiv');
 let endText = document.querySelector('.endText');
 let imgDiv = document.querySelector('.imgDiv');
 
-let checkedAmount = 0;
+
 let fieldArr = Array.prototype.slice.call(fields)
-let toNext = 5
-let stage = 1;
 let blue;
-let toClick = fieldArr.filter((el) => el.id >=5 && el.id <=9)
-console.log(toClick)
 checkbox.disabled = true;
+
+
+let stage = 1;
+let checkedAmount = 0;
+let targetAmount = 0;
+let toNext = 0;
+let toClick = [];
+let clickedCounter = 0;
+
+
+const stageData = {
+    1: {
+        toClick: fieldArr.filter(el => el.id >= 5 && el.id <= 9),
+        rowHighlight: '.row1',
+        colHighlight: null,
+        requiredChecks: 5,
+        enableCheckbox: false,
+        text: "Your task is to check as many boxes as it writes next to this row. Click all 5 boxes in the 2nd row."
+    },
+    2: {
+        toClick: fieldArr.filter(el => el.id >= 10 && el.id <= 14),
+        rowHighlight: '.row2',
+        colHighlight: null,
+        requiredChecks: 5,
+        enableCheckbox: false,
+        text: "Now, complete the 3rd row in the same way."
+    },
+    3: {
+        toClick: [],
+        rowHighlight: null,
+        colHighlight: null,
+        requiredChecks: 1,
+        enableCheckbox: true,
+        text: 'Change mode to "X"s by checking the box bellow.'
+    },
+    4: {
+        toClick: fieldArr.filter(el => el.id == 0 || el.id == 15 || el.id == 20),
+        rowHighlight: null,
+        colHighlight: '.col0',
+        requiredChecks: 3,
+        enableCheckbox: false,
+        text: "You can fill in the 1st column because there is nothing left to check (number above this column changed color to gray)."
+    },
+    5: {
+        toClick: fieldArr.filter(el => el.id == 4 || el.id == 19 || el.id == 24),
+        rowHighlight: null,
+        colHighlight: '.col4',
+        requiredChecks: 3,
+        enableCheckbox: false,
+        text: "Same situation in the last column. You know what to do!"
+    },
+    6: {
+        toClick: [],
+        rowHighlight: null,
+        colHighlight: null,
+        requiredChecks: 1,
+        enableCheckbox: true,
+        text: "Now go back to checking mode (click the checkbox bellow)."
+    },
+    7: {
+        toClick: fieldArr.filter(el => el.id >= 16 && el.id <= 18),
+        rowHighlight: '.row3',
+        colHighlight: null,
+        requiredChecks: 3,
+        enableCheckbox: false,
+        text: "There are only 3 empty boxes in 4th row and the number on the left says 3. Check all these boxes!"
+    },
+    8: {
+        toClick: fieldArr.filter(el => el.id == 1 || el.id == 3),
+        rowHighlight: '.row0',
+        colHighlight: null,
+        requiredChecks: 2,
+        enableCheckbox: false,
+        text: "In the 1st row there are two numbers. That means it needs to be at least one space between them. Check the outside boxes in 1st row!"
+    },
+    9: {
+        toClick: [],
+        rowHighlight: null,
+        colHighlight: null,
+        requiredChecks: 1,
+        enableCheckbox: true,
+        text: 'Change mode to "X"s because you completed 1st row.'
+    },
+    10: {
+        toClick: fieldArr.filter(el => el.id == 2),
+        rowHighlight: '.row0',
+        colHighlight: null,
+        requiredChecks: 1,
+        enableCheckbox: false,
+        text: "Mark the remaining empty box in the 1st row."
+    },
+    11: {
+        toClick: [],
+        rowHighlight: null,
+        colHighlight: null,
+        requiredChecks: 1,
+        enableCheckbox: true,
+        text: "Change the mode to check the last box."
+    },
+    12: {
+        toClick: fieldArr.filter(el => el.id == 22),
+        rowHighlight: '.col2',
+        colHighlight: '.row4',
+        requiredChecks: 1,
+        enableCheckbox: false,
+        text: "Finish by filling the center square in the third column."
+    }
+};
+checkbox.addEventListener("click", () => {
+    if (!checkbox.disabled) {
+        checkAction(null); // Simulate field check for checkbox-based stage
+    }
+});
 
 let json = {
           "img": "serce.png",
@@ -30,7 +141,6 @@ console.log(json);
 
 let arr = json["arr"];
 let mode = Math.sqrt(arr.length)
-let targetAmount = 0;
 
 for (let i = 0; i < arr.length; i++){
     if(arr[i]==1){
@@ -68,39 +178,9 @@ let startX = null;
 let startY = null;
 let lockedDirection = null;
 
-function colors(){
-    blue.style.border = "3px solid aqua";
-    toClick.map((el, index) => {
-        el.style.borderTop = "3px solid red"
-        el.style.borderBottom = "3px solid red"
-        if(index == 0){
-            el.style.borderLeft = "3px solid red"
-        }
-        if(index == 4){
-            el.style.borderRight = "3px solid red"
-        }
-    })
-}
-
-function offColors(){
-    blue.style.border = "3px solid aqua";
-    toClick.map((el, index) => {
-        el.style.borderTop = "3px solid red"
-        el.style.borderBottom = "3px solid red"
-        if(index == 0){
-            el.style.borderLeft = "3px solid red"
-        }
-        if(index == 4){
-            el.style.borderRight = "3px solid red"
-        }
-    })
-}
-
-function handles(){
+function handles() {
     toClick.forEach((field) => {
-        field.addEventListener("dragstart", (event) => {
-            event.preventDefault();
-        });
+        field.addEventListener("dragstart", (event) => event.preventDefault());
 
         field.addEventListener("mousedown", () => {
             isMouseDown = true;
@@ -109,7 +189,6 @@ function handles(){
             startY = parseInt(y);
             lockedDirection = null;
             checkAction(field);
-            console.log("Start at:", x, y);
         });
 
         field.addEventListener("mouseenter", () => {
@@ -118,7 +197,7 @@ function handles(){
                 const currX = parseInt(x);
                 const currY = parseInt(y);
 
-                if (lockedDirection === null) {
+                if (!lockedDirection) {
                     if (currX !== startX) lockedDirection = "hor";
                     else if (currY !== startY) lockedDirection = "ver";
                 }
@@ -138,7 +217,6 @@ function handles(){
         });
     });
 }
-handles()
 
 document.addEventListener("mouseup", () => {
     isMouseDown = false;
@@ -151,56 +229,145 @@ document.addEventListener("selectstart", (event) => {
     event.preventDefault();
 });
 
-async function checkAction(field){
-    if(wait || field.style.backgroundColor === 'rgb(30, 30, 30)' || field.hasChildNodes()){
+function checkAction(field) {
+    if (!field) {
+        updateClicked(false);
         return;
     }
+
+    if (wait || field.style.backgroundColor === 'rgb(30, 30, 30)' || field.hasChildNodes()) return;
 
     const col = field.id % mode;
     const row = Math.floor(field.id / mode);
 
-    if(arr[field.id] === 1){
+    if (arr[field.id] === 1) {
         field.style.backgroundColor = "#1E1E1E";
         field.classList.add("checked");
-        updateClicked();
-
-
-        checkAllRow(row)
-        checkAllCol(col)
-    }
-    else if(arr[field.id] === 0){
+        checkAllRow(row, rows, mode);
+        checkAllCol(col, cols, mode);
+        updateClicked(true);
+    } else {
         const x = document.createElement('i');
-        x.classList.add('bi');
-        x.classList.add('bi-x-lg');
+        x.classList.add('bi', 'bi-x-lg');
         field.appendChild(x);
+        updateClicked(false);
     }
 
-    checkCol(col)
-    checkRow(row)
+    checkCol(col, cols, mode);
+    checkRow(row, rows, mode);
 }
 
-async function updateClicked(){
+async function updateClicked(increment = true) {
     checkedAmount++;
-    console.log(checkedAmount)
-    if(checkedAmount==toNext){
+
+    if(increment){
+        clickedCounter++
+    }
+
+    console.log("Checked", checkedAmount, "Required", toNext);
+
+    if (checkedAmount >= toNext) {
         stage++;
-        console.log("next", stage)
-        if(stage == 2){
-            offColors()
-            console.log("ejjj")
-            toClick = fieldArr.filter((el) => el.id >=10 && el.id <=14)
-            blue = document.querySelector('.row2')
-            handles()
-            colors()
+        loadStage(stage);
+    }
+
+    if (clickedCounter === targetAmount) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        endGame();
+    }
+}
+
+function loadStage(stageNumber) {
+    console.log("Loading stage", stageNumber);
+    const stageConfig = stageData[stageNumber];
+    if (!stageConfig) return;
+
+    offColors();
+
+    toClick = stageConfig.toClick;
+    toNext = stageConfig.requiredChecks;
+    checkedAmount = 0;
+    checkbox.disabled = !stageConfig.enableCheckbox;
+
+    blue = null
+    if (stageConfig.rowHighlight) {
+        blue = document.querySelector(stageConfig.rowHighlight);
+    }
+    if (stageConfig.colHighlight) {
+        blue = document.querySelector(stageConfig.colHighlight);
+    }
+    console.log(blue)
+
+    handles();
+    colors();
+
+    document.getElementById("cloud").innerText = stageConfig.text || "";
+}
+
+function colors() {
+    if (blue) blue.style.border = "3px solid aqua";
+
+    if (toClick.length === 0) return;
+
+    const isColumn = blue && blue.classList.contains("col");
+
+    // Sort by field id to keep order
+    const sortedFields = [...toClick].sort((a, b) => a.id - b.id);
+
+    // Group contiguous fields
+    const groups = [];
+    let currentGroup = [sortedFields[0]];
+
+    for (let i = 1; i < sortedFields.length; i++) {
+        const prev = parseInt(sortedFields[i - 1].id);
+        const curr = parseInt(sortedFields[i].id);
+
+        const expectedDiff = isColumn ? 5 : 1; // 5 for column (down), 1 for row (right)
+        if (curr - prev === expectedDiff) {
+            currentGroup.push(sortedFields[i]);
+        } else {
+            groups.push(currentGroup);
+            currentGroup = [sortedFields[i]];
         }
     }
-    if(checkedAmount==targetAmount){
-        await new Promise(resolve => setTimeout(resolve, 500));
-        endGame()
-    }
+    groups.push(currentGroup);
+
+    groups.forEach(group => {
+        group.forEach((el, idx) => {
+            el.style.border = "none";
+
+            if (isColumn) {
+                el.style.borderLeft = "3px solid red";
+                el.style.borderRight = "3px solid red";
+                el.style.borderTop = "1px solid black";
+                el.style.borderBottom = "1px solid black";
+                if (idx === 0) el.style.borderTop = "3px solid red";
+                if (idx === group.length - 1) el.style.borderBottom = "3px solid red";
+            } else {
+                el.style.borderTop = "3px solid red";
+                el.style.borderBottom = "3px solid red";
+                el.style.borderLeft = "1px solid black";
+                el.style.borderRight = "1px solid black";
+                if (idx === 0) el.style.borderLeft = "3px solid red";
+                if (idx === group.length - 1) el.style.borderRight = "3px solid red";
+            }
+        });
+    });
+}
+
+function offColors() {
+    fieldArr.forEach(field => {
+        field.style.borderTop = "1px solid black";
+        field.style.borderBottom = "1px solid black";
+        field.style.borderLeft = "1px solid black";
+        field.style.borderRight = "1px solid black";
+    });
+
+    if (blue) blue.style.border = "";
 }
 
 function reset(){
+    console.log("dwafgawhgsdeh")
     window.location.reload();
 }
 
@@ -220,113 +387,4 @@ async function endGame(){
         endText.innerText = "Thanks for playing the tutorial!";
 }
 
-async function checkCol(col){
-    let counter = 0;
-    let sequenceNr = 0;
-    for(let i = col; i < mode*mode + col; i += mode){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(cols[col][sequenceNr] == counter){
-                document.querySelector(`.col${col}.colId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr++;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-    counter = 0;
-    sequenceNr = cols[col].length - 1;
-    for(let i = mode*mode + col - mode; i > 0; i -= mode){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(cols[col][sequenceNr] == counter){
-                document.querySelector(`.col${col}.colId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr--;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-}
-async function checkRow(row){
-    let counter = 0;
-    let sequenceNr = 0;
-    for(let i = row * mode; i < row * mode + mode; i += 1){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(rows[row][sequenceNr] == counter){
-                document.querySelector(`.row${row}.rowId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr++;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-    counter = 0;
-    sequenceNr = rows[row].length - 1;
-    for(let i = row * mode + mode - 1; i > row * mode; i -= 1){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-            if(rows[row][sequenceNr] == counter){
-                document.querySelector(`.row${row}.rowId${sequenceNr}`).style.color = 'lightgray';
-                sequenceNr--;
-            }
-        }
-        else if(field.hasChildNodes()){
-            counter = 0;
-        }
-        else{
-            break;
-        }
-    }
-}
-async function checkAllRow(row){
-    let counter = 0;
-    let checked = 0;
-    rows[row].map((e) => {
-        checked += e;
-    })
-    //console.log(checked)
-    for(let i = row * mode; i < row * mode + mode; i += 1){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-        }
-    }
-    if(counter == checked){
-        document.querySelector(`.row${row}`).style.color = "lightgray";
-    }
-}
-
-async function checkAllCol(col){
-    let counter = 0;
-    let checked = 0;
-    cols[col].map((e) => {
-        checked += e;
-    })
-    for(let i = col; i < mode*mode + col; i += mode){
-        let field = document.getElementById(i);
-        if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
-            counter ++;
-        }
-    }
-    if(counter == checked){
-        document.querySelector(`.col${col}`).style.color = "lightgray";
-    }
-}
+loadStage(stage);

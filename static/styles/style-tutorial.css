@@ -37,12 +37,22 @@
             height: 250px;
         }
 
+.cloudBox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+}
 .cloud{
     background-color: white;
     padding: 10px;
     border: 1px solid black;
     border-radius: 10px;
     font-weight: bold;
-
+    width: 380px;
     font-size: 20px;
+}
+
+.col{
+    max-width: 50px;
 }
