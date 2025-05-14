@@ -117,12 +117,12 @@ const stageData = {
         colHighlight: '.row4',
         requiredChecks: 1,
         enableCheckbox: false,
-        text: "Finish by filling the center square in the third column."
+        text: "Finish by filling the 4th box in 3rd column."
     }
 };
 checkbox.addEventListener("click", () => {
     if (!checkbox.disabled) {
-        checkAction(null); // Simulate field check for checkbox-based stage
+        checkAction(null);
     }
 });
 
@@ -137,7 +137,6 @@ let json = {
           0,1,1,1,0,
           0,0,1,0,0]
       };
-console.log(json);
 
 let arr = json["arr"];
 let mode = Math.sqrt(arr.length)
@@ -264,7 +263,6 @@ async function updateClicked(increment = true) {
         clickedCounter++
     }
 
-    console.log("Checked", checkedAmount, "Required", toNext);
 
     if (checkedAmount >= toNext) {
         stage++;
@@ -278,7 +276,6 @@ async function updateClicked(increment = true) {
 }
 
 function loadStage(stageNumber) {
-    console.log("Loading stage", stageNumber);
     const stageConfig = stageData[stageNumber];
     if (!stageConfig) return;
 
@@ -296,7 +293,6 @@ function loadStage(stageNumber) {
     if (stageConfig.colHighlight) {
         blue = document.querySelector(stageConfig.colHighlight);
     }
-    console.log(blue)
 
     handles();
     colors();
@@ -311,10 +307,8 @@ function colors() {
 
     const isColumn = blue && blue.classList.contains("col");
 
-    // Sort by field id to keep order
     const sortedFields = [...toClick].sort((a, b) => a.id - b.id);
 
-    // Group contiguous fields
     const groups = [];
     let currentGroup = [sortedFields[0]];
 
@@ -322,7 +316,7 @@ function colors() {
         const prev = parseInt(sortedFields[i - 1].id);
         const curr = parseInt(sortedFields[i].id);
 
-        const expectedDiff = isColumn ? 5 : 1; // 5 for column (down), 1 for row (right)
+        const expectedDiff = isColumn ? 5 : 1;
         if (curr - prev === expectedDiff) {
             currentGroup.push(sortedFields[i]);
         } else {
@@ -364,11 +358,6 @@ function offColors() {
     });
 
     if (blue) blue.style.border = "";
-}
-
-function reset(){
-    console.log("dwafgawhgsdeh")
-    window.location.reload();
 }
 
 async function endGame(){

@@ -1,8 +1,6 @@
 from __future__ import print_function
 import random
 
-import flask
-
 from flask import Flask
 from flask import render_template, url_for, request, jsonify, session
 import os, shutil, math
@@ -14,23 +12,12 @@ from flask_session import Session
 
 
 
-# import binascii
-# import numpy as np
-# import scipy
-# import scipy.misc
-# import scipy.cluster
-
 NUM_CLUSTERS = 5
 
 app = Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# app.add_url_rule(
-#     "/static/src/favicons/favicon.ico",
-#     endpoint="favicon",
-#     redirect_to=url_for("static", filename="favicon.ico"),
-# )
 
 @app.route('/')
 def index():
@@ -132,7 +119,6 @@ def clearUploads():
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-#https://stackoverflow.com/questions/3241929/how-to-find-the-dominant-most-common-color-in-an-image
 
 if __name__ == '__main__':
     app.run(debug=True)

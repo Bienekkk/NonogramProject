@@ -8,12 +8,10 @@ function compareNumbers(a, b) {
         colorsStr = colorsStr.slice(2, -2)
         let colorsArr = colorsStr.split("), (")
         colorsArr[0] = colorsArr[0].slice(1)
-        //console.log(colorsArr)
 
         colorsArr = colorsArr.map((el) => {
             return el.split(", ")
         })
-        //console.log(colorsArr)
 
         let sumArr = colorsArr.map((el) => {
             let c = 0;
@@ -23,11 +21,8 @@ function compareNumbers(a, b) {
             return c
         })
 
-        //console.log(sumArr)
-
         let temp = [...sumArr]
         temp.sort(compareNumbers)
-        console.log(temp[50])
 
         let checkedArr = sumArr.map((el, index) => {
             if(temp[99]==el ? el<temp[50] : el <= temp[50]){
@@ -38,9 +33,7 @@ function compareNumbers(a, b) {
             }
         })
 
-        //console.log(checkedArr)
 
-//------------------------------------------------------------------------------------
 
 let colDiv = document.querySelector('.colDiv');
 let rowDiv = document.querySelector('.rowDiv');
@@ -49,12 +42,6 @@ let checkbox = document.getElementById('checkbox');
 let endDiv = document.querySelector('.endDiv');
 let endText = document.querySelector('.endText');
 let imgDiv = document.querySelector('.imgDiv');
-
-//let jsonstr = document.querySelector('.data').innerText;
-//jsonstr = jsonstr.replaceAll("'", '"');
-
-//let json = JSON.parse(jsonstr);
-//console.log(json);
 
 let mode = 10
 let targetAmount = 0;
@@ -114,9 +101,7 @@ for (let i = 0; i < mode; i++) {
     rows[i] = tmp;
 }
 
-//console.log(rows, cols)
 
-//let cols = json["col"];
 for (let i = 0; i < cols.length; i++) {
     const col = document.createElement("p");
     col.classList.add('col', `col${i}`);
@@ -128,7 +113,6 @@ for (let i = 0; i < cols.length; i++) {
     colDiv.appendChild(col);
 }
 
-//let rows = json["row"];
 for (let i = 0; i < rows.length; i++) {
     const row = document.createElement("p");
     row.classList.add('row', `row${i}`);
@@ -161,7 +145,6 @@ fields.forEach((field) => {
         startY = parseInt(y);
         lockedDirection = null;
         checkAction(field, mode, wait, checkedArr, updateClicked, updateHearts, rows, cols);
-        console.log("Start at:", x, y);
     });
 
     field.addEventListener("mouseenter", () => {
@@ -216,10 +199,6 @@ async function updateClicked(){
         await new Promise(resolve => setTimeout(resolve, 500));
         endGame("You win!!!")
     }
-}
-
-function reset(){
-    window.location.reload();
 }
 
 async function endGame(text){

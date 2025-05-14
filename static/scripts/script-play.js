@@ -12,7 +12,6 @@ let jsonstr = document.querySelector('.data').innerText;
 jsonstr = jsonstr.replaceAll("'", '"');
 
 let json = JSON.parse(jsonstr);
-console.log(json);
 
 let arr = json["arr"];
 let mode = Math.sqrt(arr.length)
@@ -62,7 +61,6 @@ fields.forEach((field) => {
         startY = parseInt(y);
         lockedDirection = null;
         checkAction(field, mode, wait, arr, updateClicked, updateHearts, rows, cols);
-        console.log("Start at:", x, y);
     });
 
     field.addEventListener("mouseenter", () => {
@@ -121,10 +119,6 @@ async function updateClicked(){
         await new Promise(resolve => setTimeout(resolve, 500));
         endGame("You win!!!")
     }
-}
-
-function reset(){
-    window.location.reload();
 }
 
 async function endGame(text){

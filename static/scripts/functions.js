@@ -82,7 +82,6 @@ export function checkAllRow(row, rows, mode){
     rows[row].map((e) => {
         checked += e;
     })
-    //console.log(checked)
     for(let i = row * mode; i < row * mode + mode; i += 1){
         let field = document.getElementById(i);
         if(field.style.backgroundColor === 'rgb(30, 30, 30)'){
