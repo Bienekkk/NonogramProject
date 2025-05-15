@@ -22,13 +22,13 @@ A simple Flask-based Nonogram app featuring tutorial, games at different levels 
 ### 2. 🐍 Clone the repository
 ```bash
 git clone https://github.com/Bienekkk/NonogramProject.git
-cd nonogram
+cd NonogramProject
 ```
 ---
 
 ### 3. 📦 Install the requirements
 ```bash
--pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ---
